@@ -3,151 +3,355 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neuromorphic Wave Processor Engine</title>
+    <title>Neuromorphic Wave Processor Workstation</title>
     <style>
+        :root {
+            --bg-dark: #111115;
+            --panel-bg: #1b1b22;
+            --border-color: #333342;
+            --text-primary: #f0f0f5;
+            --text-muted: #9a9ab0;
+            --accent-green: #10b981;
+            --accent-green-hover: #059669;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --stroke-wave: #38bdf8;
+            --font-mono: 'Courier New', Courier, monospace;
+        }
+
         body {
-            font-family: monospace;
-            background-color: white;
-            color: black;
-            margin: 40px;
+            font-family: var(--font-mono);
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
+
+        .container {
+            width: 100%;
+            max-width: 950px;
+        }
+
         h2 {
-            margin-bottom: 5px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-primary);
         }
+
         .controls {
-            border: 1px solid black;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             padding: 20px;
-            max-width: 600px;
-            margin-bottom: 25px;
-            background: white;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
         input[type="text"] {
             width: 100%;
-            padding: 8px;
-            margin: 10px 0;
-            border: 1px solid black;
-            font-family: monospace;
-            font-size: 16px;
+            padding: 12px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--accent-green);
+            font-family: var(--font-mono);
+            font-size: 1.05rem;
             box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s ease;
         }
+
+        input[type="text"]:focus {
+            border-color: var(--accent-green);
+        }
+
+        .btn-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
         button {
-            background: black;
-            color: white;
+            background: var(--accent-green);
+            color: #000;
             border: none;
-            padding: 10px 15px;
-            font-family: monospace;
-            font-size: 14px;
+            border-radius: 4px;
+            padding: 8px 14px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: bold;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
-        button.reset-btn {
-            background: #777;
-        }
+
         button:hover {
-            background: #333;
+            background: var(--accent-green-hover);
         }
-        .rules-box {
-            font-size: 12px;
-            margin-top: 10px;
-            line-height: 1.4;
+
+        button.secondary-btn {
+            background: #272732;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
         }
+
+        button.secondary-btn:hover {
+            background: #333342;
+        }
+
+        button.active-toggle {
+            background: var(--accent-cyan);
+            color: #000;
+        }
+
+        button.reset-btn {
+            background: transparent;
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+        }
+
+        button.reset-btn:hover {
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-right: 4px;
+            font-weight: bold;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .card-title {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .card-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--accent-green);
+        }
+
+        .canvas-wrapper {
+            position: relative;
+        }
+
         svg {
-            border: 1px solid black;
-            background: white;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             display: block;
+            width: 100%;
+            height: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .hud-tooltip {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(17, 17, 21, 0.9);
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            pointer-events: none;
+            display: none;
+        }
+
+        .rules-box {
+            font-size: 0.75rem;
+            margin-top: 15px;
+            line-height: 1.5;
+            border-top: 1px solid var(--border-color);
+            padding-top: 12px;
+            color: var(--text-muted);
+        }
+
+        .rules-box code {
+            color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 2px 5px;
+            border-radius: 3px;
         }
     </style>
 </head>
 <body>
 
-    <h2>Wave Engine Digital Staircase Execution Analysis</h2>
-    
-    <div class="controls">
-        <strong>Enter Your Command Stream:</strong>
-        <input type="text" id="streamInput" value="5 11111111111111111">
-        <div class="btn-group">
-            <button onclick="illustrateWave()">Illustrate Wave</button>
-            <button class="reset-btn" onclick="clearSystem()">Reset System</button>
+    <div class="container">
+        <h2>Neuromorphic Wave Processor Workstation</h2>
+
+        <div class="controls">
+            <div class="input-group">
+                <label for="streamInput">RAW INSTRUCTION STREAM (OPTIMIZED REGISTER PERSISTENCE):</label>
+                <input type="text" id="streamInput" value="34 11 334 1100">
+            </div>
+
+            <div class="btn-toolbar">
+                <div class="btn-group">
+                    <button id="runBtn">Illustrate Wave</button>
+                    
+                    <span class="section-label">REPEAT:</span>
+                    <button id="repeat2xBtn" class="secondary-btn">x2</button>
+                    <button id="repeat3xBtn" class="secondary-btn">x3</button>
+
+                    <span class="section-label">HARDWARE:</span>
+                    <button id="channelToggleBtn" class="secondary-btn">Dual Channel: OFF</button>
+                </div>
+
+                <div class="btn-group">
+                    <button id="exportBtn" class="secondary-btn">Export SVG</button>
+                    <button id="resetBtn" class="reset-btn">Reset</button>
+                </div>
+            </div>
+
+            <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                <span class="section-label">PRESETS:</span>
+                <button class="secondary-btn preset-btn" data-preset="35 11111166000000">Damped Wave</button>
+                <button class="secondary-btn preset-btn" data-preset="34 11 334 1100">Scaled Staircase</button>
+                <button class="secondary-btn preset-btn" data-preset="35 101010101010">Oscillator</button>
+                <button class="secondary-btn preset-btn" data-preset="35 11120002111">Target Resets</button>
+            </div>
+
+            <div class="rules-box">
+                <strong>Instruction Alphabet:</strong><br>
+                <code>0</code>: Trough Force | <code>1</code>: Upwards Force | <code>2</code>: Reset (0) | 
+                <code>3</code>: Gear Width Modifier | <code>4</code>: Roof +1 | <code>5</code>: Unbound | <code>6</code>: Attenuator
+            </div>
         </div>
-        
-        <div class="rules-box">
-            <strong>Active Instruction Alphabet (Fully Mid-Stream Dynamic):</strong><br>
-            0: Trough Force | 1: Upwards Force | 2: Target Reset (0) | 3: Gear X (Linear Block Width Modifier)<br>
-            4: Roof +1 Unit (Instant) | 5: Unbound (Instant) | 6: Attenuator
+
+        <div class="analytics-grid">
+            <div class="card">
+                <div class="card-title">Total Duration</div>
+                <div class="card-value" id="valDuration">0.0</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Max Peak</div>
+                <div class="card-value" id="valMaxPeak">+0.0</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Min Peak</div>
+                <div class="card-value" id="valMinPeak">-0.0</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Peak-to-Peak</div>
+                <div class="card-value" id="valP2P">0.0</div>
+            </div>
+        </div>
+
+        <div class="canvas-wrapper">
+            <div id="hudTooltip" class="hud-tooltip">T: 0.0 | AMP: 0.0</div>
+            <svg id="waveSvg" viewBox="0 0 950 500" width="950" height="500"></svg>
         </div>
     </div>
 
-    <svg id="waveSvg" width="950" height="500"></svg>
-
     <script>
-        function clearSystem() {
-            document.getElementById('streamInput').value = '';
-            const svg = document.getElementById('waveSvg');
-            svg.innerHTML = '';
-        }
+        const streamInput = document.getElementById('streamInput');
+        const waveSvg = document.getElementById('waveSvg');
+        const runBtn = document.getElementById('runBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const repeat2xBtn = document.getElementById('repeat2xBtn');
+        const repeat3xBtn = document.getElementById('repeat3xBtn');
+        const channelToggleBtn = document.getElementById('channelToggleBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const hudTooltip = document.getElementById('hudTooltip');
 
-        function illustrateWave() {
-            const stream = document.getElementById('streamInput').value.trim();
-            const svg = document.getElementById('waveSvg');
-            
-            if (stream === "") {
-                svg.innerHTML = '';
-                return;
-            }
+        const valDuration = document.getElementById('valDuration');
+        const valMaxPeak = document.getElementById('valMaxPeak');
+        const valMinPeak = document.getElementById('valMinPeak');
+        const valP2P = document.getElementById('valP2P');
 
-            // Master Application Environment Registers
-            let currentWidthSetting = 1.0; 
+        let isDualChannel = false;
+        let cachedWavePath = [];
+        let cachedConfig = {};
+
+        // Parser supporting persistent state
+        function parseAndSimulate(stream) {
+            let currentWidthSetting = 1.0;
             let consecutive3s = 0;
-            let ceiling = 0.0;    
+            let ceiling = 0.0;
             let accum = 0.0;
             let isUnbound = false;
 
-            let wavePath = [];
+            const wavePath = [];
             let currentTime = 0.0;
-
-            // Track absolute maximum and minimum peaks for dynamic Y-scaling calculation
             let maxPeak = 0.0;
             let minPeak = 0.0;
 
-            // Pass 1: Core simulation compilation pass
             for (let i = 0; i < stream.length; i++) {
-                let cmd = stream[i];
-
+                const cmd = stream[i];
                 if (cmd === " ") continue;
 
                 if (cmd === '3') {
-                    if (i === 0 || stream[i-1] !== '3') {
-                        consecutive3s = 1;
-                    } else {
-                        consecutive3s += 1;
-                    }
+                    consecutive3s = (i > 0 && stream[i - 1] === '3') ? consecutive3s + 1 : 1;
                     currentWidthSetting = consecutive3s;
                 } else if (cmd === '4') {
                     ceiling += 1.0;
+                    isUnbound = false;
                 } else if (cmd === '5') {
                     isUnbound = true;
-                } 
-                else if (['1', '0', '2', '6'].includes(cmd)) {
-                    let oldAccum = accum;
+                } else if (['1', '0', '2', '6'].includes(cmd)) {
+                    const oldAccum = accum;
 
                     if (cmd === '1') {
-                        if (oldAccum <= 0) accum = 1.0; 
-                        else accum = oldAccum + 1.0;
-                        if (!isUnbound && accum > ceiling) accum = ceiling; 
-                    } 
-                    else if (cmd === '0') {
-                        if (oldAccum >= 0) accum = -1.0; 
-                        else accum = oldAccum - 1.0;
-                        if (!isUnbound && accum < -ceiling) accum = -ceiling; 
-                    } 
-                    else if (cmd === '2') {
-                        accum = 0.0; 
-                    } 
-                    else if (cmd === '6') {
+                        accum = (oldAccum <= 0) ? 1.0 : oldAccum + 1.0;
+                        if (!isUnbound && accum > ceiling) accum = ceiling;
+                    } else if (cmd === '0') {
+                        accum = (oldAccum >= 0) ? -1.0 : oldAccum - 1.0;
+                        if (!isUnbound && accum < -ceiling) accum = -ceiling;
+                    } else if (cmd === '2') {
+                        accum = 0.0;
+                    } else if (cmd === '6') {
                         if (oldAccum > 0) accum = Math.max(0.0, oldAccum - 1.0);
                         else if (oldAccum < 0) accum = Math.min(0.0, oldAccum + 1.0);
                     }
 
-                    // Update boundary logs
                     if (accum > maxPeak) maxPeak = accum;
                     if (accum < minPeak) minPeak = accum;
 
@@ -156,84 +360,180 @@
                 }
             }
 
-            let finalDuration = currentTime;
-            if (finalDuration <= 0) finalDuration = 10.0;
-
-            const padding = 85;
-            const width = 950;
-            const height = 500;
-            const centerGridY = height / 2;
-
-            // DYNAMIC SCALE MATRIX CALCULATION:
-            // Find out whichever peak (positive or negative) stretched furthest from equilibrium
-            let largestMagnitude = Math.max(Math.abs(maxPeak), Math.abs(minPeak));
-            
-            // Hardcode a baseline minimum scale ceiling of 5 units so flat signals don't distort look look huge
-            let activeAxisRange = Math.max(5.0, largestMagnitude + 1.0);
-
-            function getX(t) {
-                return padding + (t / finalDuration) * (width - (2 * padding));
-            }
-            function getY(amp) {
-                // The vertical coordinate scales dynamically relative to the active axis range
-                let verticalWorkingArea = (height / 2) - 30; 
-                return centerGridY - (amp / activeAxisRange) * verticalWorkingArea;
-            }
-
-            let drawBuffer = "";
-
-            // 1. Draw Left Y-Axis Measurement Ruler (Recalculates increments intelligently)
-            drawBuffer += `<line x1="${padding}" y1="20" x2="${padding}" y2="${height - 20}" stroke="black" stroke-width="1.5" />`;
-            
-            // Determine step tick density based on how tall the wave grows
-            let labelIncrement = Math.ceil(activeAxisRange / 5); 
-            
-            for (let amp = -Math.floor(activeAxisRange); amp <= Math.ceil(activeAxisRange); amp += labelIncrement) {
-                if (amp === 0) continue;
-                let tickY = getY(amp);
-                if (tickY < 20 || tickY > height - 20) continue; // Boundary guard inside canvas field
-                
-                let labelText = amp > 0 ? `+${amp}` : `${amp}`;
-                drawBuffer += `<line x1="${padding - 6}" y1="${tickY}" x2="${padding}" y2="${tickY}" stroke="black" stroke-width="1.2" />`;
-                drawBuffer += `<text x="${padding - 14}" y="${tickY + 4}" font-family="monospace" font-size="12" text-anchor="end" fill="black" font-weight="bold">${labelText}</text>`;
-            }
-
-            // 2. Center Zero Equilibrium Axis Tracking Line
-            let xStart = getX(0);
-            let xEnd = getX(finalDuration);
-            drawBuffer += `<line x1="${xStart}" y1="${centerGridY}" x2="${xEnd}" y2="${centerGridY}" stroke="black" stroke-width="1.2" stroke-dasharray="4" />`;
-
-            // 3. Draw Clean 90-Degree Digital Staircase Wave Paths
-            if (wavePath.length > 0) {
-                for (let i = 0; i < wavePath.length; i++) {
-                    let step = wavePath[i];
-                    let horizX1 = getX(step.t1);
-                    let horizX2 = getX(step.t2);
-                    let stepY = getY(step.amp);
-                    
-                    drawBuffer += `<line x1="${horizX1}" y1="${stepY}" x2="${horizX2}" y2="${stepY}" stroke="black" stroke-width="2.5" stroke-linecap="square" />`;
-                    
-                    if (i > 0) {
-                        let prevStep = wavePath[i-1];
-                        let prevY = getY(prevStep.amp);
-                        drawBuffer += `<line x1="${horizX1}" y1="${prevY}" x2="${horizX1}" y2="${stepY}" stroke="black" stroke-width="2.5" stroke-linecap="square" />`;
-                    }
-                }
-            } else {
-                drawBuffer += `<line x1="${xStart}" y1="${centerGridY}" x2="${xEnd}" y2="${centerGridY}" stroke="black" stroke-width="2.5" />`;
-            }
-
-            // 4. Info Display Box
-            drawBuffer += `<rect x="${width - 250}" y="${20}" width="${230}" height="${45}" fill="white" stroke="black" stroke-width="1" />`;
-            drawBuffer += `<text x="${width - 235}" y="${45}" font-family="monospace" font-size="12" font-weight="bold" fill="black">Function String: ${stream}</text>`;
-
-            svg.innerHTML = drawBuffer;
+            return { wavePath, finalDuration: currentTime || 10.0, maxPeak, minPeak };
         }
 
-        window.onload = function() {
-            const svg = document.getElementById('waveSvg');
-            svg.innerHTML = '';
-        };
+        function renderWave() {
+            const stream = streamInput.value.trim();
+            if (!stream) {
+                waveSvg.innerHTML = '';
+                updateAnalytics(0, 0, 0);
+                return;
+            }
+
+            const { wavePath, finalDuration, maxPeak, minPeak } = parseAndSimulate(stream);
+            cachedWavePath = wavePath;
+
+            updateAnalytics(finalDuration, maxPeak, minPeak);
+
+            const width = 950;
+            const height = 500;
+            const padding = 85;
+            const centerGridY = height / 2;
+
+            const largestMagnitude = Math.max(Math.abs(maxPeak), Math.abs(minPeak));
+            const activeAxisRange = Math.max(5.0, largestMagnitude + 1.0);
+
+            const getX = t => padding + (t / finalDuration) * (width - 2 * padding);
+            const getY = amp => {
+                const verticalWorkingArea = (height / 2) - 30;
+                return centerGridY - (amp / activeAxisRange) * verticalWorkingArea;
+            };
+
+            cachedConfig = { padding, width, height, finalDuration, activeAxisRange, getX, getY };
+
+            let svgContent = '';
+
+            // Y-Axis
+            svgContent += `<line x1="${padding}" y1="20" x2="${padding}" y2="${height - 20}" stroke="#475569" stroke-width="1.5" />`;
+
+            const labelIncrement = Math.ceil(activeAxisRange / 5);
+            for (let amp = -Math.floor(activeAxisRange); amp <= Math.ceil(activeAxisRange); amp += labelIncrement) {
+                if (amp === 0) continue;
+                const tickY = getY(amp);
+                if (tickY < 20 || tickY > height - 20) continue;
+
+                const labelText = amp > 0 ? `+${amp}` : `${amp}`;
+                svgContent += `<line x1="${padding - 6}" y1="${tickY}" x2="${padding}" y2="${tickY}" stroke="#475569" stroke-width="1.2" />`;
+                svgContent += `<text x="${padding - 14}" y="${tickY + 4}" font-family="monospace" font-size="12" text-anchor="end" fill="#94a3b8" font-weight="bold">${labelText}</text>`;
+            }
+
+            // Zero Baseline
+            const xStart = getX(0);
+            const xEnd = getX(finalDuration);
+            svgContent += `<line x1="${xStart}" y1="${centerGridY}" x2="${xEnd}" y2="${centerGridY}" stroke="#334155" stroke-width="1.5" stroke-dasharray="4" />`;
+
+            // Draw Wave
+            svgContent += drawPathSegments(wavePath, getX, getY, '#38bdf8');
+
+            if (isDualChannel && wavePath.length > 0) {
+                const invertedPath = wavePath.map(step => ({ ...step, amp: -step.amp }));
+                svgContent += drawPathSegments(invertedPath, getX, getY, '#06b6d4', '2', '2 2');
+            }
+
+            // Readout
+            svgContent += `
+                <rect x="${width - 270}" y="20" width="250" height="45" fill="#111115" stroke="#333342" stroke-width="1" rx="4" />
+                <text x="${width - 255}" y="47" font-family="monospace" font-size="12" font-weight="bold" fill="#10b981">Stream: ${stream}</text>
+            `;
+
+            waveSvg.innerHTML = svgContent;
+        }
+
+        function drawPathSegments(path, getX, getY, strokeColor, strokeWidth = '2.5', dashArray = '') {
+            let buffer = '';
+            path.forEach((step, i) => {
+                const horizX1 = getX(step.t1);
+                const horizX2 = getX(step.t2);
+                const stepY = getY(step.amp);
+
+                buffer += `<line x1="${horizX1}" y1="${stepY}" x2="${horizX2}" y2="${stepY}" stroke="${strokeColor}" stroke-width="${strokeWidth}" stroke-dasharray="${dashArray}" stroke-linecap="square" />`;
+
+                if (i > 0) {
+                    const prevY = getY(path[i - 1].amp);
+                    buffer += `<line x1="${horizX1}" y1="${prevY}" x2="${horizX1}" y2="${stepY}" stroke="${strokeColor}" stroke-width="${strokeWidth}" stroke-dasharray="${dashArray}" stroke-linecap="square" />`;
+                }
+            });
+            return buffer;
+        }
+
+        function updateAnalytics(duration, maxPeak, minPeak) {
+            valDuration.innerText = duration.toFixed(1);
+            valMaxPeak.innerText = (maxPeak > 0 ? '+' : '') + maxPeak.toFixed(1);
+            valMinPeak.innerText = minPeak.toFixed(1);
+            valP2P.innerText = (maxPeak - minPeak).toFixed(1);
+        }
+
+        // Interactive HUD
+        waveSvg.addEventListener('mousemove', (e) => {
+            if (!cachedWavePath.length || !cachedConfig.getX) return;
+
+            const rect = waveSvg.getBoundingClientRect();
+            const mouseX = ((e.clientX - rect.left) / rect.width) * 950;
+
+            const padding = cachedConfig.padding;
+            const width = cachedConfig.width;
+            const finalDuration = cachedConfig.finalDuration;
+
+            if (mouseX < padding || mouseX > width - padding) {
+                hudTooltip.style.display = 'none';
+                return;
+            }
+
+            const hoverTime = ((mouseX - padding) / (width - 2 * padding)) * finalDuration;
+            const activeStep = cachedWavePath.find(step => hoverTime >= step.t1 && hoverTime <= step.t2);
+
+            if (activeStep) {
+                hudTooltip.style.display = 'block';
+                hudTooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+                hudTooltip.style.top = (e.clientY - rect.top - 20) + 'px';
+                hudTooltip.innerText = `T: ${hoverTime.toFixed(1)} | AMP: ${(activeStep.amp > 0 ? '+' : '') + activeStep.amp.toFixed(1)}`;
+            }
+        });
+
+        waveSvg.addEventListener('mouseleave', () => {
+            hudTooltip.style.display = 'none';
+        });
+
+        // Controls
+        repeat2xBtn.addEventListener('click', () => {
+            streamInput.value = (streamInput.value.trim() + " " + streamInput.value.trim()).trim();
+            renderWave();
+        });
+
+        repeat3xBtn.addEventListener('click', () => {
+            const s = streamInput.value.trim();
+            streamInput.value = `${s} ${s} ${s}`.trim();
+            renderWave();
+        });
+
+        channelToggleBtn.addEventListener('click', () => {
+            isDualChannel = !isDualChannel;
+            channelToggleBtn.classList.toggle('active-toggle', isDualChannel);
+            channelToggleBtn.innerText = `Dual Channel: ${isDualChannel ? 'ON' : 'OFF'}`;
+            renderWave();
+        });
+
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                streamInput.value = btn.getAttribute('data-preset');
+                renderWave();
+            });
+        });
+
+        exportBtn.addEventListener('click', () => {
+            const svgData = new XMLSerializer().serializeToString(waveSvg);
+            const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `wave_execution_${Date.now()}.svg`;
+            link.click();
+            URL.revokeObjectURL(url);
+        });
+
+        resetBtn.addEventListener('click', () => {
+            streamInput.value = '';
+            waveSvg.innerHTML = '';
+            updateAnalytics(0, 0, 0);
+        });
+
+        runBtn.addEventListener('click', renderWave);
+        streamInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') renderWave();
+        });
+
+        window.addEventListener('DOMContentLoaded', renderWave);
     </script>
 </body>
 </html>
